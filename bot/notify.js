@@ -1,6 +1,20 @@
 const Twilio = require("twilio");
+const { uniq } = require("lodash");
 
 require("dotenv").config();
+
+const DISPATCH_LEVELS = {
+  ALL_USERS: 1,
+  SMS_USERS: 2,
+  CALL_USERS: 2,
+  TESTERS: 3,
+  DEVELOPERS: 4
+};
+
+const DISPATCH_METHODS = {
+  CALL: "call",
+  MESSAGE: "message"
+};
 
 const twilio = new Twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
@@ -10,52 +24,73 @@ async function sendCall(messageBody, to) {
       <Say voice="woman">${messageBody}. ${messageBody}. ${messageBody}. ${messageBody}. ${messageBody}</Say>
   </Response>`;
 
-  console.log(xml);
-
   const call = await twilio.calls.create({
     url: `http://twimlets.com/echo?Twiml=${encodeURIComponent(xml)}`,
     to: to,
     from: process.env.TWILIO_NUMBER
   });
-
-  console.log(call);
 }
 
-async function sendText(messageBody, to) {
+async function sendMessage(messageBody, to) {
   const message = await twilio.messages.create({
     body: messageBody,
     to: to,
     from: process.env.TWILIO_NUMBER
   });
-
-  console.log(message);
 }
 
-async function notify(messageBody) {
-  messageBody = `${messageBody}`;
-  console.log(messageBody);
-  const alphaTesterNumbers = process.env.ALPHA_TESTER_NUMBERS.split(",");
+async function dispatch({ body, level, method }) {
+  const phoneNumbers = getNumbers(dispatchLevel);
+  console.log(`Dispatching ${method} to ${phoneNumbers.length} numbers:`, body);
 
-  for (const phoneNumber of alphaTesterNumbers) {
-    console.log("texting", phoneNumber);
+  for (const phoneNumber of phoneNumbers) {
+    console.log(`Dispatching ${method} to ${phoneNumber}`);
     try {
-      await sendText(messageBody, phoneNumber);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  const alphaCallTesterNumbers = process.env.ALPHA_CALL_TESTER_NUMBERS.split(
-    ","
-  );
-  for (const phoneNumber of alphaCallTesterNumbers) {
-    console.log("calling", phoneNumber);
-    try {
-      await sendCall(messageBody, phoneNumber);
+      if (method === DISPATCH_METHODS.CALL) {
+        return await sendCall(body, phoneNumber);
+      }
+      if (method === DISPATCH_METHODS.MESSAGE) {
+        return await sendMessage(body, phoneNumber);
+      }
     } catch (err) {
       console.error(err);
     }
   }
 }
 
-module.exports = notify;
+function dispatchCalls({ body, level }) {
+  return dispatch({ body, level, method: DISPATCH_METHODS.CALL });
+}
+
+function dispatchMessages({ body, level }) {
+  return dispatch({ body, level, method: DISPATCH_METHODS.MESSAGE });
+}
+
+function dispatchNotifications(notifications) {
+  return Promise.all(notifications.map(notification => dispatch(notification)));
+}
+
+function getNumbers(level) {
+  level = DISPATCH_LEVELS.DEVELOPERS;
+
+  return uniq([
+    ...(level <= DISPATCH_LEVELS.DEVELOPERS
+      ? process.env.DEVELOPER_NUMBERS.split(",")
+      : []),
+    ...(level <= DISPATCH_LEVELS.TESTERS
+      ? process.env.TESTER_NUMBERS.split(",")
+      : []),
+    ...(level <= DISPATCH_LEVELS.CALL_USERS
+      ? process.env.CALL_NUMBERS.split(",")
+      : []),
+    ...(level <= DISPATCH_LEVELS.SMS_USERS
+      ? process.env.SMS_NUMBERS.split(",")
+      : [])
+  ]);
+}
+
+module.exports = {
+  dispatchMessages,
+  dispatchCalls,
+  DISPATCH_LEVELS
+};

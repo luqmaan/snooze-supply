@@ -9,55 +9,19 @@ const cheerio = require("cheerio");
 
 require("dotenv").config();
 
-const notify = require("./notify");
+const { DISPATCH_LEVELS, dispatchNotifications } = require("./notify");
 
 const SERVER_URLS = process.env.SERVER_URLS.split(",");
 const HISTORY_PATH = path.resolve(__dirname, "history.json");
 
-const States = {
+const PageStates = {
   PASSWORD: "PASSWORD",
   AVAILABLE: "AVAILABLE",
-  UPCOMING: "UPCOMING",
   SOLD_OUT: "SOLD_OUT",
+  TODAY: "TODAY",
+  TOMORROW: "TOMORROW",
   UNKNOWN: "UNKNOWN"
 };
-
-async function getPageState(res) {
-  const bodyLowerCase = res.body.toLowerCase();
-
-  if (bodyLowerCase.includes("/password")) {
-    return States.PASSWORD;
-  }
-
-  if (bodyLowerCase.includes("/cart/add")) {
-    return States.AVAILABLE;
-  }
-
-  if (bodyLowerCase.includes("tomorrow") || bodyLowerCase.includes("today")) {
-    return States.UPCOMING;
-  }
-
-  if (bodyLowerCase.includes("sold out")) {
-    return States.SOLD_OUT;
-  }
-
-  return States.UNKNOWN;
-}
-
-async function getHistory() {
-  const historyFile = await readFile(HISTORY_PATH, "utf8");
-  const history = JSON.parse(historyFile);
-  return history;
-}
-
-async function getPreviousState() {
-  const history = await getHistory();
-  const latestUpdate = last(history);
-  if (!latestUpdate) {
-    return null;
-  }
-  return latestUpdate.state;
-}
 
 async function main() {
   try {
@@ -75,7 +39,12 @@ async function main() {
     if (prevState !== latestState) {
       const product = await getProduct(res);
 
-      await notifyStateChange(product, prevState, latestState);
+      const notifications = await getNotificationsForStateChange(
+        product,
+        prevState,
+        latestState
+      );
+      await dispatchNotifications(notifications);
       await updateHistory(latestState);
       await saveRes(latestState, res);
     }
@@ -84,38 +53,127 @@ async function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+async function getPageState(res) {
+  const bodyLowerCase = res.body.toLowerCase();
+
+  if (bodyLowerCase.includes("/password")) {
+    return PageStates.PASSWORD;
+  }
+
+  if (bodyLowerCase.includes("/cart/add")) {
+    return PageStates.AVAILABLE;
+  }
+
+  if (bodyLowerCase.includes("tomorrow")) {
+    return PageStates.TOMORROW;
+  }
+
+  if (bodyLowerCase.includes("today")) {
+    return PageStates.TODAY;
+  }
+
+  if (bodyLowerCase.includes("sold out")) {
+    return PageStates.SOLD_OUT;
+  }
+
+  return PageStates.UNKNOWN;
+}
+
+async function getHistory() {
+  const historyFile = await readFile(HISTORY_PATH, "utf8");
+  const history = JSON.parse(historyFile);
+  return history;
+}
+
+async function getPreviousState() {
+  const history = await getHistory();
+  const latestUpdate = last(history);
+  if (!latestUpdate) {
+    return null;
+  }
+  return latestUpdate.state;
+}
 
 async function getProduct(res) {
   const $ = cheerio.load(res.body);
   const imageSrc = $(".P__img").attr("src");
 
   return {
-    title: $(".PI__title").text().toLowerCase() || null,
-    description: $(".PI__desc").text().toLowerCase() || null,
+    title: $(".PI__title").text(),
+    description: $(".PI__desc").text().replace("TODAY", "").replace("TOMORROW", "").replace("COLOR", "").trim(),
     image: (imageSrc && `https:${imageSrc}`) || null
   };
 }
 
-async function notifyStateChange(product, prevState, latestState) {
-  if (latestState === States.PASSWORD) {
-    notify("Password. Yeezy supply password page is up.");
+async function getNotificationsForStateChange(product, prevState, latestState) {
+  if (latestState === PageStates.PASSWORD) {
+    return [
+      {
+        body: "Yeezy supply password page is up.",
+        level: DISPATCH_LEVELS.ALL_USERS,
+        method: "message"
+      }
+    ];
   }
-  if (latestState === States.AVAILABLE) {
-    notify(
-      `Available! ${product.title} is available on Yeezy Supply.`
-    );
+  if (latestState === PageStates.AVAILABLE) {
+    return [
+      {
+        body: `Available! ${product.title} is available on Yeezy Supply.`,
+        level: DISPATCH_LEVELS.CALL_USERS,
+        method: "call"
+      },
+      {
+        body: `Available! ${
+          product.title
+        } is available on Yeezy Supply. https://yeezysupply.com/`,
+        level: DISPATCH_LEVELS.ALL_USERS,
+        method: "message"
+      }
+    ];
   }
-  if (latestState === States.SOLD_OUT) {
-    notify(`Sold out. ${product.title} is is sold out on Yeezy Supply.`);
+  if (latestState === PageStates.SOLD_OUT) {
+    return [
+      {
+        body: `Sold out. ${product.title} is is sold out on Yeezy Supply.`,
+        level: DISPATCH_LEVELS.ALL_USERS
+      }
+    ];
   }
-  if (latestState === States.UPCOMING) {
-    notify(`Coming soon. ${product.title} available soon on Yeezy Supply. ${product.description}`);
+  if (latestState === PageStates.TOMORROW) {
+    return [
+      {
+        body: `${product.title} available on Yeezy Supply sometime tomorrow. ${
+          product.description
+        }`,
+        level: DISPATCH_LEVELS.ALL_USERS
+      }
+    ];
   }
-  if (latestState === States.UNKNOWN) {
-    notify(
-      `Unknown state. Yeezy Supply state is in an unknown state. ${product.title} ${product.description}`
-    );
+  if (latestState === PageStates.TODAY) {
+    return [
+      {
+        body: `${
+          product.title
+        } available soon on Yeezy Supply sometime today. ${
+          product.description
+        }`,
+        level: DISPATCH_LEVELS.ALL_USERS
+      }
+    ];
+  }
+  if (latestState === PageStates.UNKNOWN) {
+    return [
+      {
+        body: `Yeezy Supply is in an unknown state. ${product.title} ${
+          product.description
+        }. https://yeezysupply.com`,
+        level: DISPATCH_LEVELS.TESTERS
+      }
+    ];
   }
 }
 
@@ -138,3 +196,10 @@ async function saveRes(latestState, res) {
     "utf8"
   );
 }
+
+module.exports = {
+  PageStates,
+  getPageState,
+  getProduct,
+  getNotificationsForStateChange,
+};
