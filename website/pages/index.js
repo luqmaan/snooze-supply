@@ -9,12 +9,68 @@ const race = (...promises) =>
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+function PhoneHr() {
+  return (
+    <div className="centered">
+      <div className="hr" />
+      <div className="icon">
+        <img src="/static/fax.svg" />
+      </div>
+      <div className="hr" />
+      <style jsx>{`
+        .centered {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 2rem 0;
+        }
+        .hr {
+          border-top: 1px solid #fff;
+          flex: 1;
+        }
+        .hr:first-child {
+          margin-right: 1rem;
+        }
+        .hr:last-child {
+          margin-left: 1rem;
+        }
+        .icon img {
+          height: 30px;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function SignupSuccess({ email, twitter, phone }) {
+  return (
+    <div>
+      <h2>Snooze season approachin’</h2>
+      <p>Thanks for signing up:</p>
+      <ul>
+        <li>{email}</li>
+        <li>{twitter}</li>
+        <li>{phone}</li>
+      </ul>
+      <p>
+        The first 15 people to follow and retweet{" "}
+        <a href="https://twitter.com/snzsply" target="_blank">
+          @snzsply
+        </a>{" "}
+        will get 1 month free and will be invited to the private alpha.
+      </p>
+    </div>
+  );
+}
+
 class WaitlistForm extends Component {
   state = {
     email: "",
+    twitter: "",
     phone: "",
     plan: null,
-    loading: false
+    loading: false,
+    success: false
   };
 
   setStateAsync = newState =>
@@ -29,12 +85,32 @@ class WaitlistForm extends Component {
     });
     await Promise.all([savePromise, delay(1000)]);
     await this.setStateAsync({ loading: false });
+    await this.setState({
+      success: true
+    });
   };
 
   render() {
+    if (this.state.success) {
+      return <SignupSuccess {...this.state} />;
+    }
+
     return (
       <div>
         <h2>Sign up for the snooze.supply waitlist</h2>
+        <p>
+          Sign up for snooze.supply and automatically get a phone call or text
+          message whenever something good drops on{" "}
+          <a href="https://yeezysupply.com/" target="_blank">
+            yeezysupply.com
+          </a>.
+        </p>
+        <p>
+          The first 15 people to follow and retweet{" "}
+          <a href="https://twitter.com/snzsply" target="_blank">
+            @snzsply
+          </a>, will get 1 month free and will be invited to the private alpha.
+        </p>
         <div className="waitlist">
           <label>
             <div className="label">
@@ -45,6 +121,17 @@ class WaitlistForm extends Component {
               type="email"
               value={this.state.email}
               onChange={e => this.setState({ email: e.target.value })}
+            />
+          </label>
+          <label>
+            <div className="label">
+              <b>Twitter</b>
+            </div>
+            <input
+              placeholder="@snzsply"
+              type="text"
+              value={this.state.twitter}
+              onChange={e => this.setState({ twitter: e.target.value })}
             />
           </label>
           <label>
@@ -124,6 +211,7 @@ class WaitlistForm extends Component {
             outline: none;
             border: 1px solid #dddddd;
           }
+          input[type="text"],
           input[type="email"],
           input[type="phone"] {
             padding: 0.5rem 1rem;
@@ -240,14 +328,9 @@ export default () => (
         If only there was something that could disturb your sleep only when
         absolutely necessary.
       </p>
-      <h2>Don't be a chump</h2>
-      <p>
-        Sign up for snooze.supply and automatically get a phone call or text
-        message whenever something good drops on{" "}
-        <a href="https://yeezysupply.com/" target="_blank">
-          yeezysupply.com
-        </a>.
-      </p>
+      <PhoneHr />
+      <WaitlistForm />
+      <PhoneHr />
       <h2>Features</h2>
       <ul>
         <li>
@@ -272,7 +355,6 @@ export default () => (
           Waverunner? Simply turn off notifications for them.
         </li>
       </ul>
-      <WaitlistForm />
       <h2>Questions</h2>
       <p>
         Have any questions? Contact me on Twitter at{" "}
@@ -294,10 +376,10 @@ export default () => (
           display: flex;
           align-items: center;
         }
-        .icon {
+        .logo .icon {
           margin-right: 1rem;
         }
-        .icon img {
+        .logo .icon img {
           height: 40px;
         }
       `}
@@ -309,8 +391,8 @@ export default () => (
         font-family: Courier New, Courier, Lucida Sans Typewriter,
           Lucida Typewriter, monospace;
         background: #0c0192;
-        font-size: 16px;
-        line-height: 20px;
+        font-size: 18px;
+        line-height: 24px;
         margin: 0;
         padding: 0.5rem 1rem;
       }

@@ -38,16 +38,18 @@ app.prepare().then(() => {
 
   server.post(`/waitlist`, async (req, res) => {
     try {
-      const { email, phone, plan } = req.body;
+      const { email, twitter, phone, plan } = req.body;
 
       await db.one(
         `INSERT INTO waitlist(
            email,
+           twitter,
            phone,
-           plan
+           plan,
          )
          VALUES(
            \${email},
+           \${twitter},
            \${phone},
            \${plan}
          )
@@ -55,6 +57,7 @@ app.prepare().then(() => {
        `,
         {
           email,
+          twitter,
           phone,
           plan
         }
