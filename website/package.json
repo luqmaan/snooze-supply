@@ -1,0 +1,27 @@
+{
+  "name": "sleep-supply",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "PORT=3004 node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js",
+    "deploy": "now && now alias"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "next": "^5.0.0",
+    "pg-promise": "^8.2.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "now": {
+    "alias": "snooze.supply"
+  }
+}
