@@ -32,7 +32,7 @@ async function getPageState(res) {
     return States.AVAILABLE;
   }
 
-  if (bodyLowerCase.includes("tomorrow")) {
+  if (bodyLowerCase.includes("tomorrow") || bodyLowerCase.includes("today")) {
     return States.UPCOMING;
   }
 
