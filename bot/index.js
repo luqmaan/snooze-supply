@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
+const cheerio = require("cheerio");
 
 require("dotenv").config();
 
@@ -72,7 +73,9 @@ async function main() {
     console.log(`${prevState} => ${latestState}`);
 
     if (prevState !== latestState) {
-      await notifyStateChange(prevState, latestState);
+      const product = await getProduct(res);
+
+      await notifyStateChange(product, prevState, latestState);
       await updateHistory(latestState);
       await saveRes(latestState, res);
     }
@@ -83,21 +86,36 @@ async function main() {
 
 main();
 
-async function notifyStateChange(prevState, latestState) {
+async function getProduct(res) {
+  const $ = cheerio.load(res.body);
+  const imageSrc = $(".P__img").attr("src");
+
+  return {
+    title: $(".PI__title").text().toLowerCase() || null,
+    description: $(".PI__desc").text().toLowerCase() || null,
+    image: (imageSrc && `https:${imageSrc}`) || null
+  };
+}
+
+async function notifyStateChange(product, prevState, latestState) {
   if (latestState === States.PASSWORD) {
-    notify("Check yeezy supply! Password page is up");
+    notify("Password. Yeezy supply password page is up.");
   }
   if (latestState === States.AVAILABLE) {
-    notify("Check yeezy supply! Product is available");
+    notify(
+      `Available! ${product.title} is available on Yeezy Supply.`
+    );
   }
   if (latestState === States.SOLD_OUT) {
-    notify("Product is sold out");
+    notify(`Sold out. ${product.title} is is sold out on Yeezy Supply.`);
   }
   if (latestState === States.UPCOMING) {
-    notify("Product available soon");
+    notify(`Coming soon. ${product.title} available soon on Yeezy Supply. ${product.description}`);
   }
   if (latestState === States.UNKNOWN) {
-    notify("Product state is unknown");
+    notify(
+      `Unknown state. Yeezy Supply state is in an unknown state. ${product.title} ${product.description}`
+    );
   }
 }
 
