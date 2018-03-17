@@ -34,14 +34,20 @@ async function sendText(messageBody, to) {
 async function notify(messageBody) {
   messageBody = `${messageBody}`;
   console.log(messageBody);
-  await sendText(messageBody, process.env.DEV_NUMBER);
-  await sendCall(messageBody, process.env.DEV_NUMBER);
   const alphaTesterNumbers = process.env.ALPHA_TESTER_NUMBERS.split(",");
 
-
   for (const phoneNumber of alphaTesterNumbers) {
-    console.log(phoneNumber);
+    console.log("texting", phoneNumber);
     await sendText(
+      messageBody,
+      phoneNumber
+    );
+  }
+
+  const alphaCallTesterNumbers = process.env.ALPHA_CALL_TESTER_NUMBERS.split(",");
+  for (const phoneNumber of alphaCallTesterNumbers) {
+    console.log("calling", phoneNumber);
+    await sendCall(
       messageBody,
       phoneNumber
     );
