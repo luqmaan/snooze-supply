@@ -70,24 +70,36 @@ class WaitlistForm extends Component {
     phone: "",
     plan: null,
     loading: false,
-    success: false
+    success: false,
+    error: null
   };
 
   setStateAsync = newState =>
     new Promise(resolve => this.setState(newState, () => resolve()));
 
   joinWaitlist = async () => {
-    await this.setStateAsync({ loading: true });
+    await this.setStateAsync({ loading: true, error: null });
     const savePromise = axios.post("/waitlist", {
       email: this.state.email,
+      twitter: this.state.twitter,
       phone: this.state.phone,
       plan: this.state.plan
     });
-    await Promise.all([savePromise, delay(1000)]);
-    await this.setStateAsync({ loading: false });
-    await this.setState({
-      success: true
-    });
+    try {
+      await Promise.all([savePromise, delay(1000)]);
+      await this.setState({
+        success: true
+      });
+    } catch (err) {
+      console.error(err);
+      if (err && err.response && err.response.data) {
+        this.setState({ error: err.response.data.error });
+      } else {
+        this.setState({ error: err.message });
+      }
+    } finally {
+      await this.setStateAsync({ loading: false });
+    }
   };
 
   render() {
@@ -192,6 +204,13 @@ class WaitlistForm extends Component {
             {!this.state.loading && "Join Waitlist"}
             {this.state.loading && "Saving..."}
           </button>
+          {this.state.error && (
+            <div>
+              <h3>Something went wrong!</h3>
+              <pre>{this.state.error}</pre>
+              <p>Tweet me @snzsply if this keeps happening.</p>
+            </div>
+          )}
         </div>
         <style jsx>{`
           label {
@@ -314,13 +333,13 @@ export default () => (
         Yeezy Supply is Kanye West's official store. Every Yeezy sneaker
         releases there, often months before they release on Adidas.com. Yeezy
         Supply releases at random times, sometimes even in the middle of the
-        night. Because of this, it's common to stay up all night refreshing
+        night. Because of this, it’s common to stay up all night refreshing
         YeezySupply.com every 10 seconds.
       </p>
       <p>
         Another approach is to turn on Twitter push notifications for{" "}
         <a href="https://twitter.com/theyeezymafia">@theyeezymafia</a>.
-        Unfortunately, they don't just tweet when the Yeezys are live. They're
+        Unfortunately, they don't just tweet when the Yeezys are live. They’re
         constantly tweeting memes and trolling sneaker twitter. Which means your
         sleep is constantly interrupted.
       </p>
@@ -339,7 +358,7 @@ export default () => (
         </li>
         <li>
           Get a text message or phone call when the password page goes up or
-          down. You can turn off this feature if you don't care about the
+          down. You can turn off this feature if you don’t care about the
           password page.
         </li>
         <li>
@@ -351,7 +370,7 @@ export default () => (
           </a>.
         </li>
         <li>
-          Opt out of releases. Don't care about dad shoes like the Powerphase or
+          Opt out of releases. Don’t care about dad shoes like the Powerphase or
           Waverunner? Simply turn off notifications for them.
         </li>
       </ul>

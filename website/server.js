@@ -40,12 +40,13 @@ app.prepare().then(() => {
     try {
       const { email, twitter, phone, plan } = req.body;
 
+
       await db.one(
         `INSERT INTO waitlist(
            email,
            twitter,
            phone,
-           plan,
+           plan
          )
          VALUES(
            \${email},
@@ -67,7 +68,7 @@ app.prepare().then(() => {
       });
     } catch (err) {
       console.error(err);
-      res.send({ error: err.message });
+      res.status(500).send({ error: err.message });
     }
   });
 

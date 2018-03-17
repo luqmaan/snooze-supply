@@ -8,5 +8,12 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "lodash": "^4.17.5",
+    "request": "^2.85.0",
+    "request-promise-native": "^1.0.5",
+    "twilio": "^3.13.1"
+  }
 }
