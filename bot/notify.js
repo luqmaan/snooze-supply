@@ -38,19 +38,23 @@ async function notify(messageBody) {
 
   for (const phoneNumber of alphaTesterNumbers) {
     console.log("texting", phoneNumber);
-    await sendText(
-      messageBody,
-      phoneNumber
-    );
+    try {
+      await sendText(messageBody, phoneNumber);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  const alphaCallTesterNumbers = process.env.ALPHA_CALL_TESTER_NUMBERS.split(",");
+  const alphaCallTesterNumbers = process.env.ALPHA_CALL_TESTER_NUMBERS.split(
+    ","
+  );
   for (const phoneNumber of alphaCallTesterNumbers) {
     console.log("calling", phoneNumber);
-    await sendCall(
-      messageBody,
-      phoneNumber
-    );
+    try {
+      await sendCall(messageBody, phoneNumber);
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
 
