@@ -148,13 +148,13 @@ describe("snooze-supply", () => {
         )
       ).toEqual([
         {
-          body: "Available! YEEZY POWERPHASE is available on Yeezy Supply.",
+          body: "Available! YEEZY POWERPHASE CORE BLACK is available on Yeezy Supply.",
           level: 2,
           method: "call"
         },
         {
           body:
-            "Available! YEEZY POWERPHASE is available on Yeezy Supply. https://yeezysupply.com/",
+            "Available! YEEZY POWERPHASE CORE BLACK is available on Yeezy Supply. https://yeezysupply.com/",
           level: 1,
           method: "message"
         }
@@ -170,8 +170,9 @@ describe("snooze-supply", () => {
         )
       ).toEqual([
         {
-          body: "Sold out. YEEZY POWERPHASE is is sold out on Yeezy Supply.",
-          level: 1
+          body: "Sold out. YEEZY POWERPHASE CORE BLACK is is sold out on Yeezy Supply.",
+          level: 1,
+          method: "message"
         }
       ]);
     });
@@ -186,8 +187,9 @@ describe("snooze-supply", () => {
       ).toEqual([
         {
           body:
-            "YEEZY POWERPHASE available on Yeezy Supply sometime tomorrow. CORE BLACK",
-          level: 1
+            "Yeezy Supply updated. YEEZY POWERPHASE CORE BLACK available sometime tomorrow.",
+          level: 1,
+          method: "message"
         }
       ]);
     });
@@ -202,8 +204,9 @@ describe("snooze-supply", () => {
       ).toEqual([
         {
           body:
-            "YEEZY POWERPHASE available soon on Yeezy Supply sometime today. CORE BLACK",
-          level: 1
+            "Yeezy Supply updated. YEEZY POWERPHASE CORE BLACK available sometime today.",
+          level: 1,
+          method: "message"
         }
       ]);
     });
@@ -219,7 +222,8 @@ describe("snooze-supply", () => {
         {
           body:
             "Yeezy Supply is in an unknown state. YEEZY POWERPHASE CORE BLACK. https://yeezysupply.com",
-          level: 3
+          level: 3,
+          method: "message"
         }
       ]);
     });
