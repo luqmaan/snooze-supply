@@ -158,9 +158,9 @@ async function getNotificationsForStateChange(product, prevState, latestState) {
   if (latestState === PageStates.TOMORROW) {
     return [
       {
-        body: `${product.title} ${
+        body: `Yeezy Supply updated. ${product.title} ${
           product.description
-        } available on Yeezy Supply sometime tomorrow.`,
+        } available sometime tomorrow.`,
         level: DISPATCH_LEVELS.ALL_USERS,
         method: "message"
       }
@@ -169,9 +169,9 @@ async function getNotificationsForStateChange(product, prevState, latestState) {
   if (latestState === PageStates.TODAY) {
     return [
       {
-        body: `${product.title} ${
+        body: `Yeezy Supply updated. ${product.title} ${
           product.description
-        } available soon on Yeezy Supply sometime today.`,
+        } available sometime today.`,
         level: DISPATCH_LEVELS.ALL_USERS,
         method: "message"
       }
