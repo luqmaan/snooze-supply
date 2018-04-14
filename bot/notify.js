@@ -63,7 +63,9 @@ function dispatchNotifications(notifications) {
 }
 
 function getNumbers(level) {
-  level = DISPATCH_LEVELS.DEVELOPERS;
+  if (process.env.DEBUG) {
+    level = DISPATCH_LEVELS.DEVELOPERS;
+  }
 
   return compact(uniq([
     ...(level <= DISPATCH_LEVELS.DEVELOPERS
