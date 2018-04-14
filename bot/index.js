@@ -104,7 +104,12 @@ async function getProduct(res) {
 
   return {
     title: $(".PI__title").text(),
-    description: $(".PI__desc").text().replace("TODAY", "").replace("TOMORROW", "").replace("COLOR", "").trim(),
+    description: $(".PI__desc")
+      .text()
+      .replace("TODAY", "")
+      .replace("TOMORROW", "")
+      .replace("COLOR", "")
+      .trim(),
     image: (imageSrc && `https:${imageSrc}`) || null
   };
 }
@@ -122,13 +127,15 @@ async function getNotificationsForStateChange(product, prevState, latestState) {
   if (latestState === PageStates.AVAILABLE) {
     return [
       {
-        body: `Available! ${product.title} is available on Yeezy Supply.`,
+        body: `Available! ${product.title} ${
+          product.description
+        } is available on Yeezy Supply.`,
         level: DISPATCH_LEVELS.CALL_USERS,
         method: "call"
       },
       {
-        body: `Available! ${
-          product.title
+        body: `Available! ${product.title} ${
+          product.description
         } is available on Yeezy Supply. https://yeezysupply.com/`,
         level: DISPATCH_LEVELS.ALL_USERS,
         method: "message"
@@ -138,30 +145,27 @@ async function getNotificationsForStateChange(product, prevState, latestState) {
   if (latestState === PageStates.SOLD_OUT) {
     return [
       {
-        body: `Sold out. ${product.title} is is sold out on Yeezy Supply.`,
-        level: DISPATCH_LEVELS.ALL_USERS
+        body: `Sold out. ${product.title} ${product.description} is is sold out on Yeezy Supply.`,
+        level: DISPATCH_LEVELS.ALL_USERS,
+        method: "message"
       }
     ];
   }
   if (latestState === PageStates.TOMORROW) {
     return [
       {
-        body: `${product.title} available on Yeezy Supply sometime tomorrow. ${
-          product.description
-        }`,
-        level: DISPATCH_LEVELS.ALL_USERS
+        body: `${product.title} ${product.description} available on Yeezy Supply sometime tomorrow.`,
+        level: DISPATCH_LEVELS.ALL_USERS,
+        method: "message"
       }
     ];
   }
   if (latestState === PageStates.TODAY) {
     return [
       {
-        body: `${
-          product.title
-        } available soon on Yeezy Supply sometime today. ${
-          product.description
-        }`,
-        level: DISPATCH_LEVELS.ALL_USERS
+        body: `${product.title} ${product.description} available soon on Yeezy Supply sometime today.`,
+        level: DISPATCH_LEVELS.ALL_USERS,
+        method: "message"
       }
     ];
   }
@@ -171,7 +175,8 @@ async function getNotificationsForStateChange(product, prevState, latestState) {
         body: `Yeezy Supply is in an unknown state. ${product.title} ${
           product.description
         }. https://yeezysupply.com`,
-        level: DISPATCH_LEVELS.TESTERS
+        level: DISPATCH_LEVELS.TESTERS,
+        method: "message"
       }
     ];
   }
@@ -201,5 +206,5 @@ module.exports = {
   PageStates,
   getPageState,
   getProduct,
-  getNotificationsForStateChange,
+  getNotificationsForStateChange
 };

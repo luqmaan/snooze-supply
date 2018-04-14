@@ -24,7 +24,7 @@ async function sendCall(messageBody, to) {
       <Say voice="woman">${messageBody}. ${messageBody}. ${messageBody}. ${messageBody}. ${messageBody}</Say>
   </Response>`;
 
-  const call = await twilio.calls.create({
+  await twilio.calls.create({
     url: `http://twimlets.com/echo?Twiml=${encodeURIComponent(xml)}`,
     to: to,
     from: process.env.TWILIO_NUMBER
@@ -32,7 +32,7 @@ async function sendCall(messageBody, to) {
 }
 
 async function sendMessage(messageBody, to) {
-  const message = await twilio.messages.create({
+  await twilio.messages.create({
     body: messageBody,
     to: to,
     from: process.env.TWILIO_NUMBER
@@ -40,7 +40,7 @@ async function sendMessage(messageBody, to) {
 }
 
 async function dispatch({ body, level, method }) {
-  const phoneNumbers = getNumbers(dispatchLevel);
+  const phoneNumbers = getNumbers(level);
   console.log(`Dispatching ${method} to ${phoneNumbers.length} numbers:`, body);
 
   for (const phoneNumber of phoneNumbers) {
@@ -56,14 +56,6 @@ async function dispatch({ body, level, method }) {
       console.error(err);
     }
   }
-}
-
-function dispatchCalls({ body, level }) {
-  return dispatch({ body, level, method: DISPATCH_METHODS.CALL });
-}
-
-function dispatchMessages({ body, level }) {
-  return dispatch({ body, level, method: DISPATCH_METHODS.MESSAGE });
 }
 
 function dispatchNotifications(notifications) {
@@ -90,7 +82,6 @@ function getNumbers(level) {
 }
 
 module.exports = {
-  dispatchMessages,
-  dispatchCalls,
+  dispatchNotifications,
   DISPATCH_LEVELS
 };

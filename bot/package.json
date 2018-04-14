@@ -5,8 +5,8 @@
   "main": "snooze.js",
   "scripts": {
     "test": "jest --watch",
-    "dev": "DEBUG=true node snooze",
-    "prod": "node snooze"
+    "dev": "DEBUG=true node index",
+    "prod": "node index"
   },
   "keywords": [],
   "author": "",
