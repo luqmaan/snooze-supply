@@ -1,5 +1,5 @@
 const Twilio = require("twilio");
-const { uniq } = require("lodash");
+const { uniq, compact } = require("lodash");
 
 require("dotenv").config();
 
@@ -65,7 +65,7 @@ function dispatchNotifications(notifications) {
 function getNumbers(level) {
   level = DISPATCH_LEVELS.DEVELOPERS;
 
-  return uniq([
+  return compact(uniq([
     ...(level <= DISPATCH_LEVELS.DEVELOPERS
       ? process.env.DEVELOPER_NUMBERS.split(",")
       : []),
@@ -78,7 +78,7 @@ function getNumbers(level) {
     ...(level <= DISPATCH_LEVELS.SMS_USERS
       ? process.env.SMS_NUMBERS.split(",")
       : [])
-  ]);
+  ]));
 }
 
 module.exports = {
