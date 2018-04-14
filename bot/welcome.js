@@ -14,5 +14,5 @@ async function sendText(messageBody, to) {
 }
 
 notify(
-  `Thanks for joining the snooze.supply. I've added you to the private alpha test for the 500 Blush release. Please share any feedback with me at 321-750-7895 or on Twitter at @snzsply.`
+  `Thanks for joining snooze.supply. You'll get text messages for the Yeezy 500 Blush release.`
 );

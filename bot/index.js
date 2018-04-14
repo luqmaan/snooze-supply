@@ -34,7 +34,9 @@ async function main() {
 
     const prevState = await getPreviousState();
 
-    console.log(`${prevState} => ${latestState}`);
+    console.log(
+      `${prevState} => ${latestState} ${new Date().toLocaleString()}`
+    );
 
     if (prevState !== latestState) {
       const product = await getProduct(res);
@@ -145,7 +147,9 @@ async function getNotificationsForStateChange(product, prevState, latestState) {
   if (latestState === PageStates.SOLD_OUT) {
     return [
       {
-        body: `Sold out. ${product.title} ${product.description} is is sold out on Yeezy Supply.`,
+        body: `Sold out. ${product.title} ${
+          product.description
+        } is is sold out on Yeezy Supply.`,
         level: DISPATCH_LEVELS.ALL_USERS,
         method: "message"
       }
@@ -154,7 +158,9 @@ async function getNotificationsForStateChange(product, prevState, latestState) {
   if (latestState === PageStates.TOMORROW) {
     return [
       {
-        body: `${product.title} ${product.description} available on Yeezy Supply sometime tomorrow.`,
+        body: `${product.title} ${
+          product.description
+        } available on Yeezy Supply sometime tomorrow.`,
         level: DISPATCH_LEVELS.ALL_USERS,
         method: "message"
       }
@@ -163,7 +169,9 @@ async function getNotificationsForStateChange(product, prevState, latestState) {
   if (latestState === PageStates.TODAY) {
     return [
       {
-        body: `${product.title} ${product.description} available soon on Yeezy Supply sometime today.`,
+        body: `${product.title} ${
+          product.description
+        } available soon on Yeezy Supply sometime today.`,
         level: DISPATCH_LEVELS.ALL_USERS,
         method: "message"
       }
