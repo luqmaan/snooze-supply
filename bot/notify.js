@@ -47,10 +47,10 @@ async function dispatch({ body, level, method }) {
     console.log(`Dispatching ${method} to ${phoneNumber}`);
     try {
       if (method === DISPATCH_METHODS.CALL) {
-        return await sendCall(body, phoneNumber);
+        await sendCall(body, phoneNumber);
       }
       if (method === DISPATCH_METHODS.MESSAGE) {
-        return await sendMessage(body, phoneNumber);
+        await sendMessage(body, phoneNumber);
       }
     } catch (err) {
       console.error(err);
