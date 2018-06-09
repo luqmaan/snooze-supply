@@ -61,13 +61,27 @@ if (require.main === module) {
 
 async function getPageState(res) {
   const bodyLowerCase = res.body.toLowerCase();
+  const $ = cheerio.load(res.body);
 
   if (bodyLowerCase.includes("/password")) {
     return PageStates.PASSWORD;
   }
 
-  if (bodyLowerCase.includes("/cart/add")) {
-    return PageStates.AVAILABLE;
+  const $featuredProduct = $(".SingleProduct__special_featured");
+
+  if ($featuredProduct.length) {
+    if (
+      $featuredProduct
+        .html()
+        .toLowerCase()
+        .includes("/cart/add")
+    ) {
+      return PageStates.AVAILABLE;
+    }
+  } else {
+    if (bodyLowerCase.includes("/cart/add")) {
+      return PageStates.AVAILABLE;
+    }
   }
 
   if (bodyLowerCase.includes("tomorrow")) {

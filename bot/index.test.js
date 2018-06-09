@@ -53,6 +53,13 @@ describe("snooze-supply", () => {
         PageStates.TOMORROW
       );
     });
+
+    it("should get the supermoon page state", async () => {
+      await testPageState(
+        "ys-supermoon-false-alarm-available-2018-06-09T03:55:49.018Z.html",
+        PageStates.UNKNOWN
+      );
+    });
   });
 
   describe("getProduct", () => {
@@ -148,7 +155,8 @@ describe("snooze-supply", () => {
         )
       ).toEqual([
         {
-          body: "Available! YEEZY POWERPHASE CORE BLACK is available on Yeezy Supply.",
+          body:
+            "Available! YEEZY POWERPHASE CORE BLACK is available on Yeezy Supply.",
           level: 2,
           method: "call"
         },
@@ -170,7 +178,8 @@ describe("snooze-supply", () => {
         )
       ).toEqual([
         {
-          body: "Sold out. YEEZY POWERPHASE CORE BLACK is is sold out on Yeezy Supply.",
+          body:
+            "Sold out. YEEZY POWERPHASE CORE BLACK is is sold out on Yeezy Supply.",
           level: 1,
           method: "message"
         }
