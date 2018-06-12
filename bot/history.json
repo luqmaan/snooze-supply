@@ -1,1 +1,130 @@
-[]
+[
+  {
+    "state": "TOMORRiO",
+    "created_at": "2018-04-14T05:21:41.987Z"
+  },
+  {
+    "state": "TOMOROW",
+    "created_at": "2018-04-14T05:22:26.817Z"
+  },
+  {
+    "state": "TOMORROW",
+    "created_at": "2018-04-14T05:23:43.298Z"
+  },
+  {
+    "state": "TODAY",
+    "created_at": "2018-04-14T11:00:41.545Z"
+  },
+  {
+    "state": "PASSWORD",
+    "created_at": "2018-04-14T13:27:42.639Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-04-14T13:32:33.937Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-04-14T13:45:20.454Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-04-14T14:00:29.688Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-04-14T14:00:41.163Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-04-14T14:23:26.790Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-04-14T14:24:35.612Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-04-14T14:26:09.539Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-04-14T14:35:43.944Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-04-14T14:36:52.883Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-04-14T14:37:42.207Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-04-14T14:47:00.880Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-04-14T14:47:50.403Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-04-14T14:48:07.572Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-04-14T14:49:09.792Z"
+  },
+  {
+    "state": "TODAY",
+    "created_at": "2018-04-14T14:51:53.851Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-04-14T14:52:30.599Z"
+  },
+  {
+    "state": "UNKNOWN",
+    "created_at": "2018-04-14T15:10:08.356Z"
+  },
+  {
+    "state": "PASSWORD",
+    "created_at": "2018-04-20T04:25:18.961Z"
+  },
+  {
+    "state": "UNKNOWN",
+    "created_at": "2018-04-20T06:39:26.056Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-06-09T03:51:56.601Z"
+  },
+  {
+    "state": "UNKNOWN",
+    "created_at": "2018-06-09T04:06:06.055Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-06-09T12:00:05.050Z"
+  },
+  {
+    "state": "UNKNOWN",
+    "created_at": "2018-06-09T19:32:40.333Z"
+  },
+  {
+    "state": "SOLD_OUT",
+    "created_at": "2018-06-09T19:32:57.673Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-06-09T20:46:02.107Z"
+  },
+  {
+    "state": "UNKNOWN",
+    "created_at": "2018-06-12T15:08:09.782Z"
+  },
+  {
+    "state": "AVAILABLE",
+    "created_at": "2018-06-12T15:09:01.781Z"
+  }
+]
